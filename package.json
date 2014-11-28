@@ -1,0 +1,22 @@
+{
+  "name": "ReflexWebMap",
+  "version": "0.0.1",
+  "description": "view reflex maps in the browser",
+  "main": " ",
+  "dependencies": {
+    "css-loader": "^0.9.0",
+    "json-loader": "^0.5.1",
+    "pegjs-loader": "^0.1.1",
+    "style-loader": "^0.8.2",
+    "stylus-loader": "^0.4.0",
+    "three": "^0.69.0",
+    "webpack": "^1.4.13"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "pack": "webpack --optimize-minimize",
+    "watch": "webpack --watch -d"
+  },
+  "author": "Bonuspunkt",
+  "license": "ISC"
+}

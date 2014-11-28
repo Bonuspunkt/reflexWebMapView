@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="UTF-8">
+  <title>title</title>
+    <style> 
+body { 
+  margin: 0; 
+  overflow: hidden;
+}
+canvas { 
+  width: 100%; 
+  height: 100% 
+}
+
+#blocker {
+
+  position: absolute;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(0,0,0,0.5);
+
+}
+
+#instructions {
+
+  width: 100%;
+  height: 100%;
+
+  display: box;
+  box-orient: horizontal;
+  box-pack: center;
+  box-align: center;
+
+  color: #ffffff;
+  text-align: center;
+
+  cursor: pointer;
+}
+    </style>  
+  </head>
+  <body>
+
+    <div id="blocker">
+
+      <div id="instructions">
+        <span style="font-size:40px">Click to play</span>
+        <br />
+        (W, A, S, D = Move, SPACE = Up, C = Down  MOUSE = Look around)
+      </div>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
