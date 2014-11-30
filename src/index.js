@@ -1,76 +1,52 @@
 var THREE = require('three');
 var PointerLockControls = require('./PointerLockControls');
-var parseMap = require('./parseMap');
+var ReflexMapV6Loader = require('./ReflexMapV6Loader');
 
-var scene = new THREE.Scene(); 
-var camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 10000 ); 
+var map;
 
-var controls = new PointerLockControls( camera, 10 );
-scene.add( controls.getObject() );
 
 var renderer = new THREE.WebGLRenderer(); 
 renderer.setSize( window.innerWidth, window.innerHeight);
 
 document.body.appendChild( renderer.domElement );
 
-
+var camera;
 function render(e) {
-  var requireRedraw = controls.update();
+  var requireRedraw = map.controls.update();
 
   requestAnimationFrame( render );
   
-  if (requireRedraw) {
-    renderer.render( scene, camera );
-  }
+  if (requireRedraw)
+    renderer.render( map.scene, camera );
 }
-render({});
 
-
-//var material = new THREE.MeshDepthMaterial({ 
-var material = new THREE.MeshBasicMaterial({ 
-  color: 0x00ff00, 
-  wireframe: true,
-  side: THREE.DoubleSide
-});
 
 (function() {
   var mapName = location.hash.substring(location.hash.lastIndexOf('/') + 1);
   document.title = 'webView ' + mapName;
 }());
 
-var xhr = new XMLHttpRequest();
-xhr.open('GET', location.hash.substring(1) + '.map');
-xhr.send();
-xhr.onload = function() {
-  var mapFile = xhr.responseText;
-  var mapData = parseMap(mapFile);
-  var brushes = mapData.filter(function(t) { return t._type === 'brush' });
-  brushes.forEach(function(brush) {
-    var vertices = brush.vertices.map(function(v) { 
-      return new THREE.Vector3(-v[0], v[1], v[2]); 
-    });
-    var faces = brush.faces.map(function(f) { 
-      if (typeof f[8] === 'number') {
-        return [new THREE.Face3(f[5], f[6], f[7]), new THREE.Face3(f[7], f[8], f[5])];
-      }
-      return [new THREE.Face3(f[5], f[6], f[7])];
-    }).reduce(function(prev, curr) { return prev.concat(curr); }, []);
+var loader = new ReflexMapV6Loader();
+loader.load(location.hash.substring(1) + '.map', function(result) {
 
-    var geom = new THREE.Geometry();
-    geom.vertices = vertices;
-    geom.faces = faces;
-    geom.mergeVertices();
+  map = result;
 
-    var mesh = new THREE.Mesh(geom, material)
+  camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 10000 );
+  map.controls = new PointerLockControls( camera, 10 );
+  map.scene.add( map.controls.getObject() );
 
-    scene.add(mesh);
-  });
 
   render({});
-};
-xhr.onerror = function() {
-  debugger;
-}
+
+});
+
+
+window.addEventListener( 'resize', function() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize( window.innerWidth, window.innerHeight );
+}, false );
 
 // Selection stuff
 // view-source:http://threejs.org/examples/webgl_effects_vr.html
@@ -94,13 +70,13 @@ if ( havePointerLock ) {
 
     if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
 
-      controls.enabled = true;
+      map.controls.enabled = true;
 
       blocker.style.display = 'none';
 
     } else {
 
-      controls.enabled = false;
+      map.controls.enabled = false;
 
       blocker.style.display = '-webkit-box';
       blocker.style.display = '-moz-box';
