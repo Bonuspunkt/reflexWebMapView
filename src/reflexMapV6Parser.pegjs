@@ -3,34 +3,39 @@ map
     { return { version: version, entities: entities }; }
 
 // types
-color
+propertyColor
   = '\t' 'ColourXRGB32' ' ' property:letters ' ' value:hexInt newline
-  { return { type: 'color', property: property, value: value }; }
+  { return { type: 'color', name: property, value: value }; }
 
-string
+propertyString
   = '\t' 'String' ('64'/'32') ' ' property:letters ' ' value:nonWhite newline
-    { return { type: 'string', property: property, value: value }; }
+    { return { type: 'string', name: property, value: value }; }
 
-uint8
+propertyFloat
+  = '\t' 'Float' ' ' property:letters ' ' value:float newline
+  { return { type: 'number', name: property, value: value }; }
+
+propertyUint8
   = '\t' 'UInt8' ' ' property:letters ' ' value:uint newline
-  { return { type: 'number', property: property, value: value }; }
+  { return { type: 'number', name: property, value: value }; }
 
-uint32
+propertyUint32
   = '\t' 'UInt32' ' ' property:letters ' ' value:uint newline
-  { return { type: 'number', property: property, value: value }; }
+  { return { type: 'number', name: property, value: value }; }
 
-vector3
+propertyVector3
   = '\t' 'Vector3' ' ' property:letters ' ' x:float ' ' y:float ' ' z:float newline
-  { return { type: 'Vector3', property: property, x: x, y: y, z: z }; }
+  { return { type: 'Vector3', name: property, value: { x: x, y: y, z: z } }; }
 
 
 
-property "property"
-  = color
-  / string
-  / uint8
-  / uint32
-  / vector3
+property
+  = propertyColor
+  / propertyFloat
+  / propertyString
+  / propertyUint8
+  / propertyUint32
+  / propertyVector3
 
 vertex
   = '\t\t' x:float ' ' y:float ' ' z:float newline
@@ -41,11 +46,13 @@ face
     ' ' textureXScale:float ' ' textureYScale:float ' ' rotation:float
     ' ' face0:uint faceRest:(' ' uint)+ ' ' texture:nonWhite newline
   { return { 
-      offset: { x: textureXOffset, y: textureYOffset }, 
-      scale: { x: textureXScale, y: textureYScale }, 
-      rotation: rotation,
-      faces: [Number(face0)].concat( faceRest.map(function(f) { return f[1]; }) ),
-      texture: texture
+      indexes: [Number(face0)].concat( faceRest.map(function(f) { return f[1]; }) ),
+      texture: {
+        name: texture,
+        offset: { x: textureXOffset, y: textureYOffset }, 
+        scale: { x: textureXScale, y: textureYScale }, 
+        rotation: rotation
+      }
     };
   }
 
@@ -63,10 +70,13 @@ brush
 
 // 
 entity
-  = 'entity' newline '\ttype ' type:letters+ newline 
+  = 'entity' newline '\ttype ' type:letters newline 
     properties:property*
     brushes:brush*
-  { return { type: type, properties: properties, brushes:brushes }; }
+  { var result = { type: type, brushes:brushes };
+    properties.forEach(function(property) { result[property.name] = property.value });
+    return result;
+  }
 
 // baseTypes
 newline       = '\r\n' / '\n'
