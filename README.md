@@ -1,10 +1,11 @@
 # Reflex Web Map View
 ## prerequisites
 - node.js
-- git
 
 ## development
 ``` bash
+# download the zip and extract it
+# or use git to clone the repository
 git clone https://github.com/Bonuspunkt/reflexWebMapView.git
 cd reflexWebMapView
 npm install .
