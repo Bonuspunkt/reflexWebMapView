@@ -16,7 +16,7 @@ http-server
 ```
 
 ## production
-```
+``` bash
 npm run-script pack
 # copy index.html & script.js to destination
 ```
