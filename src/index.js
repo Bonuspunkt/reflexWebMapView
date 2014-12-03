@@ -60,10 +60,14 @@ loader.load(location.hash.substring(1), function(result) {
     camObj.position.z = mapInfo.endCam.position.z;
 
     if (mapInfo.endCam.rotation) {
-      camObj.rotation.x = mapInfo.endCam.rotation.x;
-      camObj.rotation.y = mapInfo.endCam.rotation.x + Math.PI;
-      camObj.rotation.z = mapInfo.endCam.rotation.x;
+      console.log(mapInfo.endCam.rotation.x * 180 / Math.PI)
+
+      controls.setRotation(
+        Math.PI - mapInfo.endCam.rotation.x,
+        -mapInfo.endCam.rotation.y
+      );
     }
+
   }
 
   scene.add( camObj );

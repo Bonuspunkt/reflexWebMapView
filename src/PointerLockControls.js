@@ -147,6 +147,12 @@ var PointerLockControls = function ( camera, speed ) {
     prevTime = time;
   };
 
+
+  this.setRotation = function(yaw, pitch) {
+    yawObject.rotation.y = yaw;
+    pitchObject.rotation.x = pitch;
+  }
+
 };
 
 
