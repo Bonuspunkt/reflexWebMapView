@@ -3,6 +3,15 @@ function extractData(mapInfo) {
   var pickups = mapInfo.entities
     .filter(function(entity) { return entity.type === 'Pickup'; });
 
+  var spawns = mapInfo.entities
+    .filter(function(entity) { return entity.type === 'PlayerSpawn'; });
+
+  var teleports = mapInfo.entities
+    .filter(function(entity) { return entity.type === 'Teleporter'; });
+
+  var jumppads = mapInfo.entities
+    .filter(function(entity) { return entity.type === 'JumpPad'; });
+
   var result = {
     weapons: {
       burst: 0,
@@ -28,6 +37,11 @@ function extractData(mapInfo) {
     },
     powerup: {
       quad: 0
+    },
+    other: {
+      playerSpawns: spawns.length,
+      teleports: teleports.length,
+      jumppads: jumppads.length
     }
   };
 
