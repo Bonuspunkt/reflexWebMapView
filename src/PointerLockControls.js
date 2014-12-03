@@ -1,5 +1,5 @@
 /*
- * Based on 
+ * Based on http://threejs.org/examples/js/controls/PointerLockControls.js
  */
 
 var THREE = require('three');
@@ -41,76 +41,46 @@ var PointerLockControls = function ( camera, speed ) {
     pitchObject.rotation.x -= movementY * 0.002;
 
     pitchObject.rotation.x = Math.max( - PI_2, Math.min( PI_2, pitchObject.rotation.x ) );
-
-    scope.mouseMoved = true;
   };
 
   var onKeyDown = function ( event ) {
+    processKey(event.keyCode, true)
+  };
+  var onKeyUp = function ( event ) {
+    processKey(event.keyCode, false);
+  };
 
+  var processKey = function(keyCode, value) {
     switch ( event.keyCode ) {
 
       case 38: // up
       case 87: // w
-        moveForward = true;
+        moveForward = value;
         break;
 
       case 37: // left
       case 65: // a
-        moveLeft = true; break;
+        moveLeft = value; 
+        break;
 
       case 40: // down
       case 83: // s
-        moveBackward = true;
+        moveBackward = value;
         break;
 
       case 39: // right
       case 68: // d
-        moveRight = true;
+        moveRight = value;
         break;
 
       case 32: // space
-        moveUp = true;
+        moveUp = value;
         break;
 
       case 67: // c
-        moveDown = true;
+        moveDown = value;
         break;
     }
-  };
-
-  var onKeyUp = function ( event ) {
-
-    switch( event.keyCode ) {
-
-      case 38: // up
-      case 87: // w
-        moveForward = false;
-        break;
-
-      case 37: // left
-      case 65: // a
-        moveLeft = false;
-        break;
-
-      case 40: // down
-      case 83: // s
-        moveBackward = false;
-        break;
-
-      case 39: // right
-      case 68: // d
-        moveRight = false;
-        break;
-
-      case 32: 
-        moveUp = false;
-        break;
-        
-      case 67:
-        moveDown = false;
-        break;
-    }
-
   };
 
   document.addEventListener( 'mousemove', onMouseMove, false );
@@ -150,6 +120,7 @@ var PointerLockControls = function ( camera, speed ) {
 
     var time = performance.now();
     var delta = ( time - prevTime ) / 1000 * (speed || 1);
+    delta = Math.min(delta, .2);
 
     velocity.x -= velocity.x * 10.0 * delta;
     velocity.y -= velocity.y * 10.0 * delta;
@@ -174,11 +145,6 @@ var PointerLockControls = function ( camera, speed ) {
     yawObject.translateZ( velocity.z * delta );
 
     prevTime = time;
-
-    var requiresRedraw = this.mouseMoved || velocity.x || velocity.y || velocity.z;
-    this.mouseMoved = false;
-    return requiresRedraw;
-
   };
 
 };
