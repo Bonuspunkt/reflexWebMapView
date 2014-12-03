@@ -51,7 +51,7 @@ var PointerLockControls = function ( camera, speed ) {
   };
 
   var processKey = function(keyCode, value) {
-    switch ( event.keyCode ) {
+    switch ( keyCode ) {
 
       case 38: // up
       case 87: // w
