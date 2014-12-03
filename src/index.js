@@ -60,8 +60,6 @@ loader.load(location.hash.substring(1), function(result) {
     camObj.position.z = mapInfo.endCam.position.z;
 
     if (mapInfo.endCam.rotation) {
-      console.log(mapInfo.endCam.rotation.x * 180 / Math.PI)
-
       controls.setRotation(
         Math.PI - mapInfo.endCam.rotation.x,
         -mapInfo.endCam.rotation.y
