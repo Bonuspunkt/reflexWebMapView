@@ -24,6 +24,11 @@ var scene;
 var loader = new ReflexMapV6Loader();
 loader.load(location.hash.substring(1), function(result) {
 
+  if (!result) {
+    blocker.textContent = 'could not load map / is not a valid map file'
+    return;
+  }
+
   mapInfo = result;
 
   if (havePointerLock) {

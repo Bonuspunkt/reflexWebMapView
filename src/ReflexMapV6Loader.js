@@ -62,7 +62,12 @@ ReflexMapV6Loader.prototype = {
 
     var scope = this;
 
-    var map = parser.parse( text );
+    try {
+      var map = parser.parse( text );
+    } catch (e) {
+      console.error(e);
+      return callbackFinished(null);
+    }
 
     var urlBase = THREE.Loader.prototype.extractUrlBase( url );
 
