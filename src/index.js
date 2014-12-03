@@ -1,6 +1,7 @@
 var THREE = require('three');
 var PointerLockControls = require('./PointerLockControls');
 var ReflexMapV6Loader = require('./ReflexMapV6Loader');
+var gatherMapInfo = require('./gatherMapInfo');
 
 
 var renderer = new THREE.WebGLRenderer(); 
@@ -33,6 +34,9 @@ loader.load(location.hash.substring(1), function(result) {
   movementInstruction.textContent = '(W, A, S, D = Move, SPACE = Up, C = Down, MOUSE = Look around)';
   movementInstruction.style.padding = '10px';
   blocker.appendChild(movementInstruction);
+
+  var dom = gatherMapInfo(mapInfo.raw);
+  blocker.appendChild(dom);
 
   scene = new THREE.Scene();
 
@@ -99,7 +103,7 @@ var havePointerLock = 'pointerLockElement' in document ||
 
 if ( !havePointerLock ) {
 
-  blocker.insertAdjacentHTML('beforeend', )
+  blocker.insertAdjacentHTML('beforeend', '<h3>pointer api is not supported by your browser :(</h3>');
 
 } else {
 
@@ -165,7 +169,10 @@ if ( !havePointerLock ) {
       document.addEventListener( 'fullscreenchange', fullscreenchange, false );
       document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
 
-      element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
+      element.requestFullscreen = 
+        element.requestFullscreen || 
+        element.mozRequestFullscreen || 
+        element.webkitRequestFullscreen;
 
       element.requestFullscreen();
 
