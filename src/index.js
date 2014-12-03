@@ -28,12 +28,12 @@ loader.load(location.hash.substring(1), function(result) {
 
   if (havePointerLock) {
     blocker.textContent = 'ready, click to play';
-  }
 
-  var movementInstruction = document.createElement('div');
-  movementInstruction.textContent = '(W, A, S, D = Move, SPACE = Up, C = Down, MOUSE = Look around)';
-  movementInstruction.style.padding = '10px';
-  blocker.appendChild(movementInstruction);
+    var movementInstruction = document.createElement('div');
+    movementInstruction.textContent = '( W, A, S, D = Move, SPACE = Up, C = Down, MOUSE = Look around )';
+    movementInstruction.style.padding = '10px';
+    blocker.appendChild(movementInstruction);
+  }
 
   var dom = gatherMapInfo(mapInfo.raw);
   blocker.appendChild(dom);
@@ -103,7 +103,7 @@ var havePointerLock = 'pointerLockElement' in document ||
 
 if ( !havePointerLock ) {
 
-  blocker.insertAdjacentHTML('beforeend', '<h3>pointer api is not supported by your browser :(</h3>');
+  blocker.textContent = 'pointer api is not supported by your browser :(';
 
 } else {
 
