@@ -100,6 +100,9 @@ window.addEventListener( 'resize', function() {
   renderer.setSize( window.innerWidth, window.innerHeight );
 }, false );
 
+window.addEventListener('hashchange', function() {
+  location.reload();
+})
 
 //
 // MOUSE STUFF
