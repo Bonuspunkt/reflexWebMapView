@@ -49,6 +49,7 @@ loader.load(location.hash.substring(1), function(result) {
   scene.add(mapInfo.pickups);
   scene.add(mapInfo.jumpPad);
   scene.add(mapInfo.playerSpawns);
+  scene.add(mapInfo.teleporter);
 
   camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 10000 );
   controls = new PointerLockControls( camera, 10 );
@@ -84,7 +85,9 @@ function render(e) {
   requestAnimationFrame( render );
 
   // make the items rotate
-  mapInfo.pickups.children.forEach(function(pickup) { pickup.rotation.y += .02; });
+  if (mapInfo.pickups) {
+    mapInfo.pickups.children.forEach(function(pickup) { pickup.rotation.y += .02; });
+  }
 
   renderer.render( scene, camera );
 }

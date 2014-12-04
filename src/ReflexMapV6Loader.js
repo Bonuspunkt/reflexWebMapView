@@ -205,14 +205,17 @@ function getMaterialInfo(entity, brush) {
     return face.texture.name.indexOf('environment/liquids/water/water') !== -1;
   });
   var jumpPad = entity.type === 'JumpPad';
+  var teleporter  = entity.type === 'Teleporter';
 
   var color;
-  if (jumpPad) {
+  if (teleporter) {
+    color = 0xff00ff
+  } else if (jumpPad) {
     color = 0x00ff00;
   } else if (lava) {
     color = 0xff0000;
   } else if (water) {
-    color = 0x0000ff;
+    color = 0x3333ff;
   } else if (editorClip) {
     color = 0xffffff;
   } else {
@@ -220,8 +223,10 @@ function getMaterialInfo(entity, brush) {
   }
 
   var opacity;
-  if (jumpPad || lava || water) {
+  if (lava || water) {
     opacity = .75;
+  } else if (jumpPad || teleporter) {
+    opacity = .5
   } else if (editorClip) {
     opacity = .3;
   } else {
