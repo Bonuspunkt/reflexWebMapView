@@ -1,3 +1,5 @@
+var domRender = require('./domRender');
+
 function extractData(mapInfo) {
   
   var pickups = mapInfo.entities
@@ -96,23 +98,23 @@ function extractData(mapInfo) {
 function buildDom(mapInfo) {
   var data = extractData(mapInfo);
 
-  var result = document.createElement('div');
-  result.style.padding = '10px'
-
-  var info = Object.keys(data).forEach(function(key) {
-    var h3 = document.createElement('h3');
-    h3.textContent = key;
-    result.appendChild(h3)
-
-    var subItems = data[key];
-    Object.keys(subItems).forEach(function(subKey) {
-      var subItem = document.createElement('div');
-      subItem.textContent = subItems[subKey] + 'x ' + subKey;
-      result.appendChild(subItem);
-    });
+  return domRender({
+    className: 'block',
+    children: Object.keys(data).map(function(key) {
+      return [{
+        tagName: 'h3',
+        children: [key]
+      }].concat(
+        Object.keys(data[key]).map(function(subKey) {
+          return {
+            children: [ data[key][subKey] + 'x ' + subKey ]
+          }
+        })
+      );
+    }).reduce(function(prev, curr) {
+      return prev.concat(curr);
+    })
   });
-
-  return result;
 }
 
 module.exports = buildDom;
