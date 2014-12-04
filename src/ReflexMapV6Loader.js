@@ -219,7 +219,12 @@ function getMaterialInfo(entity, brush) {
   } else if (editorClip) {
     color = 0xffffff;
   } else {
-    color = 0x222222 + Math.random() * 0xDDDDDD;
+    var grey = maxGray * Math.random();
+    var r = maxColor * Math.random() << 16;
+    var g = maxColor * Math.random() << 8;
+    var b = maxColor * Math.random() | 0;
+
+    color = r + (grey << 16) + g + (grey << 8) + b + (grey|0);
   }
 
   var opacity;
