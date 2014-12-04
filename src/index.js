@@ -47,7 +47,8 @@ loader.load(location.hash.substring(1), function(result) {
 
   scene.add(mapInfo.worldSpawn);
   scene.add(mapInfo.pickups);
-  scene.add(mapInfo.jumpPad)
+  scene.add(mapInfo.jumpPad);
+  scene.add(mapInfo.playerSpawns);
 
   camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 10000 );
   controls = new PointerLockControls( camera, 10 );

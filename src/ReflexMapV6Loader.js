@@ -69,55 +69,17 @@ ReflexMapV6Loader.prototype = {
       return callbackFinished(null);
     }
 
-    var urlBase = THREE.Loader.prototype.extractUrlBase( url );
-
-    var geometry, material, camera, fog,
-      texture, images, color,
-      light, hex, intensity,
-      counter_models, counter_textures,
-      total_models, total_textures,
-      result;
-
-    var target_array = [];
-
-    // async geometry loaders
-
-    for ( var typeID in this.geometryHandlers ) {
-
-      var loaderClass = this.geometryHandlers[ typeID ][ "loaderClass" ];
-      this.geometryHandlers[ typeID ][ "loaderObject" ] = new loaderClass();
-
-    }
-
-    // async hierachy loaders
-
-    for ( var typeID in this.hierarchyHandlers ) {
-
-      var loaderClass = this.hierarchyHandlers[ typeID ][ "loaderClass" ];
-      this.hierarchyHandlers[ typeID ][ "loaderObject" ] = new loaderClass();
-
-    }
-
-    counter_models = 0;
-    counter_textures = 0;
-
-    result = { raw: map };
+    var result = { raw: map };
 
     var gameOverCamera;
     map.entities.forEach(function(entity) {
       var type = entity.type[0].toLowerCase() + entity.type.substring(1);
 
       if (type === 'playerSpawn') {
-        var spawn = { position: entity.position };
-        spawn.position.x *= -1;
-        if (entity.angles) {
-          spawn.rotation = entity.angles;
-          Object.keys(spawn.rotation).forEach(function(key) {
-            spawn.rotation[key] *= Math.PI / 180;
-          });
-        }
-        if (!result.playerSpawns) { result.playerSpawns = []; }
-        result.playerSpawns.push(spawn);
+        var playerSpawn = generatePlayerSpawn(entity);
+
+        if (!result.playerSpawns) { result.playerSpawns = new THREE.Object3D(); }
+        result.playerSpawns.add(playerSpawn);
       }
 
       if (gameOverCamera &&
@@ -196,6 +158,42 @@ ReflexMapV6Loader.prototype = {
 
 }
 
+
+function generatePlayerSpawn(entity) {
+  var block = new THREE.Mesh(
+    new THREE.BoxGeometry(36, 56, 36), 
+    new THREE.MeshBasicMaterial({ color: 0x130055 }) // 
+  );
+
+  var directionIndicator = new THREE.Mesh(
+    new THREE.OctahedronGeometry(9), 
+    new THREE.MeshBasicMaterial({ color: 0x330088 }) // 
+  );
+  directionIndicator.position.x = 18;
+  directionIndicator.rotation.z = Math.PI / 2;
+
+  var playerSpawn = new THREE.Object3D();
+  playerSpawn.add(block);
+  playerSpawn.add(directionIndicator);
+
+  if (entity.position) {
+    playerSpawn.position.x = -entity.position.x;
+    playerSpawn.position.y = entity.position.y + 56/2;
+    playerSpawn.position.z = entity.position.z;
+  } else {
+    playerSpawn.position.y = 56/2;
+  }
+
+  if (entity.angles) {
+    playerSpawn.rotation.y = -(entity.angles.x * Math.PI / 180) - Math.PI/2; 
+  }
+
+  return playerSpawn;
+}
+
+
+var maxGray = 0xE0;
+var maxColor = 0x1F;
 function getMaterialInfo(entity, brush) {
   var editorClip = brush.faces.some(function(face) {
     return face.texture.name.indexOf('internal/editor/textures/editor_clip') !== -1;
