@@ -2,7 +2,7 @@ var THREE = require('three');
 var PointerLockControls = require('./PointerLockControls');
 var ReflexMapV6Loader = require('./ReflexMapV6Loader');
 var gatherMapInfo = require('./gatherMapInfo');
-
+var input = require('./input');
 
 var renderer = new THREE.WebGLRenderer(); 
 renderer.setSize( window.innerWidth, window.innerHeight);
@@ -42,6 +42,7 @@ loader.load(location.hash.substring(1), function(result) {
 
   var dom = gatherMapInfo(mapInfo.raw);
   blocker.appendChild(dom);
+  blocker.appendChild(input.getForm());
 
   scene = new THREE.Scene();
 
@@ -127,13 +128,13 @@ if ( !havePointerLock ) {
 
     if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
 
-      controls.enabled = true;
+      controls.setEnabled(true);
 
       blocker.style.display = 'none';
 
     } else {
 
-      controls.enabled = false;
+      controls.setEnabled(false);
 
       blocker.style.display = '';
 
