@@ -1,4 +1,6 @@
+require('./input.styl');
 var domRender = require('./domRender');
+
 
 var settings = {
   mouse: {
@@ -30,9 +32,40 @@ function saveSettings() {
 module.exports = {
   getForm: function() {
 
+    var mouseSettings = [{
+      tagName: 'h3',
+      children: ['mouse']
+    }, {
+      tagName: 'div',
+      children: [{
+        tagName: 'label',
+        children: ['sensitivity']
+      }, {
+        tagName: 'input',
+        type: 'range',
+        min: 1,
+        max: 10,
+        step: 0.1,
+        style: { width: 115 },
+        value: settings.mouse.sensitivity,
+        change: function(e) {
+          sensDisplay.value = e.target.value;
+
+          settings.mouse.sensitivity = e.target.value;
+          saveSettings();
+        }
+      }, {
+        tagName: 'input',
+        disabled: true,
+        value: settings.mouse.sensitivity,
+        style: { width: '30px', textAlign: 'center' },
+        _init: function (el) { sensDisplay = el; }
+      }]
+    }];
+
     var keybindings = [{
       tagName: 'h3',
-      children: ['Keys']
+      children: ['keyboard']
     }].concat(Object.keys(settings.keyboard).map(function(key) {
       return {
         tagName: 'div',
@@ -74,35 +107,7 @@ module.exports = {
         e.cancelBubble = true;
         e.preventDefault();
       },
-      children: [{
-        tagName: 'h3',
-        children: ['Mouse']
-      }, {
-        tagName: 'div',
-        children: [{
-          tagName: 'label',
-          children: ['Sensitivity']
-        }, {
-          tagName: 'input',
-          type: 'range',
-          min: 1,
-          max: 10,
-          step: 0.1,
-          value: settings.mouse.sensitivity,
-          change: function(e) {
-            sensDisplay.value = e.target.value;
-
-            settings.mouse.sensitivity = e.target.value;
-            saveSettings();
-          }
-        }, {
-          tagName: 'input',
-          disabled: true,
-          value: settings.mouse.sensitivity,
-          style: { width: '30px', textAlign: 'center' },
-          _init: function (el) { sensDisplay = el; }
-        }]
-      }].concat(keybindings)
+      children: mouseSettings.concat(keybindings)
     });
   },
   getSettings: function() {
