@@ -124,14 +124,23 @@ var PointerLockControls = function ( camera, speed ) {
     velocity.y -= velocity.y * 10.0 * delta;
     velocity.z -= velocity.z * 10.0 * delta;
 
-    if ( moveForward ) velocity.z -= 400.0 * delta;
-    if ( moveBackward ) velocity.z += 400.0 * delta;
+    var vertFactor = Math.sin(pitchObject.rotation.x);
+    var horzFactor = Math.cos(pitchObject.rotation.x);
+
+    if ( moveForward ) {
+      velocity.z -= 400.0 * delta * horzFactor;
+      velocity.y += 400.0 * delta * vertFactor;
+    }
+    if ( moveBackward ) {
+      velocity.z += 400.0 * delta * horzFactor;
+      velocity.y -= 400.0 * delta * vertFactor;
+    }
 
     if ( moveLeft ) velocity.x -= 400.0 * delta;
     if ( moveRight ) velocity.x += 400.0 * delta;
 
-    if ( moveUp ) velocity.y += 400 * delta;
-    if ( moveDown ) velocity.y -= 400 * delta;
+    if ( moveUp ) velocity.y += 400.0 * delta;
+    if ( moveDown ) velocity.y -= 400.0 * delta;
 
     ['x','y','z'].forEach(function(key) {
       var value = Math.abs( velocity[key] );
