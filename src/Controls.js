@@ -5,7 +5,7 @@
 var THREE = require('three');
 var input = require('./input');
 
-var PointerLockControls = function ( camera, speed ) {
+var Controls = function ( camera, usePointerLock, speed ) {
 
   var scope = this;
 
@@ -34,27 +34,52 @@ var PointerLockControls = function ( camera, speed ) {
 
   var PI_2 = Math.PI / 2;
 
+  var mousePosition;
+  var onMouseDown = function ( event ) {
+    if (!enabled) { return; }
+    if (!usePointerLock) {
+      mousePosition = { x: event.x, y: event.y };
+    }
+  };
   var onMouseMove = function ( event ) {
 
     if ( !enabled ) return;
+    if ( !usePointerLock && !mousePosition ) return;
 
-    var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-    var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+    var newPosition = { x: event.x, y: event.y };
 
-    yawObject.rotation.y -= movementX * 0.001 * settings.mouse.sensitivity;
-    pitchObject.rotation.x -= movementY * 0.001 * settings.mouse.sensitivity;
+    var movement;
+    if (usePointerLock) {
+      movement = { 
+        x: event.movementX || event.mozMovementX || event.webkitMovementX || 0,
+        y: event.movementY || event.mozMovementY || event.webkitMovementY || 0
+      };
+    } else {
+      movement = { x: newPosition.x - mousePosition.x, y: newPosition.y - mousePosition.y };
+    }
+
+    yawObject.rotation.y -= movement.x * 0.001 * settings.mouse.sensitivity;
+    pitchObject.rotation.x -= movement.y * 0.001 * settings.mouse.sensitivity;
 
     pitchObject.rotation.x = Math.max( - PI_2, Math.min( PI_2, pitchObject.rotation.x ) );
+
+    mousePosition = newPosition;
+  };
+  var onMouseUp = function ( event ) {
+    if (!enabled) { return; }
+    if (!usePointerLock) {
+      mousePosition = false;
+    }
   };
 
   var onKeyDown = function ( event ) {
-    processKey(event.keyCode, true)
+    processKey(event.keyCode, true);
   };
   var onKeyUp = function ( event ) {
     processKey(event.keyCode, false);
   };
-
   var processKey = function(keyCode, value) {
+    if (!enabled) { return; }
     switch ( keyCode ) {
 
       case settings.keyboard.forward:
@@ -83,7 +108,9 @@ var PointerLockControls = function ( camera, speed ) {
     }
   };
 
+  document.addEventListener( 'mousedown', onMouseDown, false );
   document.addEventListener( 'mousemove', onMouseMove, false );
+  document.addEventListener( 'mouseup', onMouseUp, false );
   document.addEventListener( 'keydown', onKeyDown, false );
   document.addEventListener( 'keyup', onKeyUp, false );
 
@@ -118,7 +145,7 @@ var PointerLockControls = function ( camera, speed ) {
 
     var time = performance.now();
     var delta = ( time - prevTime ) / 1000 * (speed || 1);
-    delta = Math.min(delta, .2);
+    delta = Math.min(delta, .1);
 
     velocity.x -= velocity.x * 10.0 * delta;
     velocity.y -= velocity.y * 10.0 * delta;
@@ -169,4 +196,4 @@ var PointerLockControls = function ( camera, speed ) {
 };
 
 
-module.exports = PointerLockControls;
+module.exports = Controls;

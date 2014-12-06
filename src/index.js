@@ -1,5 +1,5 @@
 var THREE = require('three');
-var PointerLockControls = require('./PointerLockControls');
+var Controls = require('./Controls');
 var ReflexMapV6Loader = require('./ReflexMapV6Loader');
 var gatherMapInfo = require('./gatherMapInfo');
 var input = require('./input');
@@ -40,6 +40,9 @@ loader.load(location.hash.substring(1), function(result) {
     blocker.appendChild(movementInstruction);
   }
 
+  camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 10000 );
+  controls = new Controls( camera, havePointerLock, 10 );
+
   var dom = gatherMapInfo(mapInfo.raw);
   blocker.appendChild(dom);
   blocker.appendChild(input.getForm());
@@ -52,8 +55,6 @@ loader.load(location.hash.substring(1), function(result) {
   scene.add(mapInfo.playerSpawns);
   scene.add(mapInfo.teleporter);
 
-  camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 10000 );
-  controls = new PointerLockControls( camera, 10 );
 
   var camObj = controls.getObject();
     
@@ -103,72 +104,69 @@ window.addEventListener( 'resize', function() {
 
 window.addEventListener('hashchange', function() {
   location.reload();
-})
+});
 
 //
 // MOUSE STUFF
 //
+var element = document.body;
 var blocker = document.getElementById( 'blocker' );
 
-// http://www.html5rocks.com/en/tutorials/pointerlock/intro/
-
-var havePointerLock = 'pointerLockElement' in document || 
+var havePointerLock = 
+  'pointerLockElement' in document || 
   'mozPointerLockElement' in document || 
   'webkitPointerLockElement' in document;
 
-if ( !havePointerLock ) {
 
-  blocker.textContent = 'pointer api is not supported by your browser :(';
 
-} else {
+var pointerlockchange = function ( event ) {
 
-  var element = document.body;
+  if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
 
-  var pointerlockchange = function ( event ) {
+    controls.setEnabled(true);
 
-    if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
+    blocker.style.display = 'none';
 
-      controls.setEnabled(true);
+  } else {
 
-      blocker.style.display = 'none';
-
-    } else {
-
-      controls.setEnabled(false);
-
-      blocker.style.display = '';
-
-    }
-
-  }
-
-  var pointerlockerror = function ( event ) {
+    controls.setEnabled(false);
 
     blocker.style.display = '';
 
   }
 
-  // Hook pointer lock state change events
-  document.addEventListener( 'pointerlockchange', pointerlockchange, false );
-  document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
-  document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
-
-  document.addEventListener( 'pointerlockerror', pointerlockerror, false );
-  document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
-  document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
-
-  blocker.addEventListener( 'click', function ( event ) {
-
-    blocker.style.display = 'none';
-
-    // Ask the browser to lock the pointer
-    element.requestPointerLock = 
-      element.requestPointerLock || 
-      element.mozRequestPointerLock || 
-      element.webkitRequestPointerLock;
-
-    element.requestPointerLock();
-
-  }, false );
-
 }
+
+var pointerlockerror = function ( event ) {
+  blocker.style.display = '';
+}
+
+// Hook pointer lock state change events
+document.addEventListener( 'pointerlockchange', pointerlockchange, false );
+document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
+document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
+
+document.addEventListener( 'pointerlockerror', pointerlockerror, false );
+document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
+document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
+
+blocker.addEventListener( 'click', function ( event ) {
+
+  blocker.style.display = 'none';
+
+  // Ask the browser to lock the pointer
+  element.requestPointerLock = 
+    element.requestPointerLock || 
+    element.mozRequestPointerLock || 
+    element.webkitRequestPointerLock;
+  if (element.requestPointerLock) {
+    element.requestPointerLock();
+  }
+
+  if (!havePointerLock) {
+    controls.setEnabled(true);
+    blocker.style.display = 'none';
+  }
+
+
+}, false );
