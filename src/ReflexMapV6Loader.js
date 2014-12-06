@@ -144,9 +144,14 @@ ReflexMapV6Loader.prototype = {
         geometry.faces = faces;
         geometry.mergeVertices();
 
+
+        var wireframeColor = getWireframeColor(material.color);
         var mesh = THREE.SceneUtils.createMultiMaterialObject( geometry, [
           material,
-          new THREE.MeshBasicMaterial( { color: 0x222222, wireframe: true} )
+          new THREE.MeshBasicMaterial( { 
+            color: wireframeColor,
+            wireframe: true
+          })
         ]);
 
         if (!result[type]) { result[type] = new THREE.Object3D(); }
@@ -245,6 +250,25 @@ function getMaterialInfo(entity, brush) {
     color: color,
     opacity: opacity
   };
+}
+
+
+function getWireframeColor(color) {
+  var multi = 1;
+
+  var sum = color.r + color.g + color.b
+  if (sum < .5) {
+    multi = 10 * 255;
+  } else if (sum < 1) {
+    multi = 2 * 255;
+  } else if (sum < 1.5) {
+    multi = 1.3 * 255;
+  } else {
+    multi = .8 * 255;
+  }
+  return ((multi * color.r) << 16) +
+    ((multi * color.g) << 8) +
+    (multi * color.b)
 }
 
 
