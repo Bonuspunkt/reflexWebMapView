@@ -3,6 +3,7 @@ var domRender = require('./domRender');
 
 
 var settings = {
+  fov: 90,
   mouse: {
     sensitivity: 5,
   },
@@ -30,8 +31,11 @@ function saveSettings() {
 
 
 module.exports = {
-  getForm: function() {
+  getForm: function(camera) {
 
+    camera.fov = settings.fov;
+
+    var sensDisplay;
     var mouseSettings = [{
       tagName: 'h3',
       children: ['mouse']
@@ -46,7 +50,7 @@ module.exports = {
         min: 1,
         max: 10,
         step: 0.1,
-        style: { width: 115 },
+        style: { width: 115, verticalAlign: 'middle' },
         value: settings.mouse.sensitivity,
         change: function(e) {
           sensDisplay.value = e.target.value;
@@ -98,7 +102,7 @@ module.exports = {
       }
     }));
 
-    var sensDisplay;
+    var fovDisplay;
     return domRender({
       tagName: 'form',
       className: 'settings block',
@@ -107,7 +111,30 @@ module.exports = {
         e.cancelBubble = true;
         e.preventDefault();
       },
-      children: mouseSettings.concat(keybindings)
+      children: [{
+        tagName: 'label',
+        children: ['FOV']
+      }, {
+        tagName: 'input',
+        type: 'range',
+        min: 75,
+        max: 150,
+        step: 1,
+        value: settings.fov,
+        style: { width: 115, verticalAlign: 'middle' },
+        change: function() {
+          camera.fov = this.value;
+          camera.updateProjectionMatrix();
+          fovDisplay.value = this.value;
+          settings.fov = this.value;
+          saveSettings();
+        }
+      }, {
+        tagName: 'input',
+        value: settings.fov,
+        style: { width: '30px', textAlign: 'center' },
+        _init: function(el) { fovDisplay = el; }
+      }].concat(mouseSettings).concat(keybindings)
     });
   },
   getSettings: function() {

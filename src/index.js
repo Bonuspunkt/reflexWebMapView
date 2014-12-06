@@ -45,7 +45,7 @@ loader.load(location.hash.substring(1), function(result) {
 
   var dom = gatherMapInfo(mapInfo.raw);
   blocker.appendChild(dom);
-  blocker.appendChild(input.getForm());
+  blocker.appendChild(input.getForm(camera));
 
   scene = new THREE.Scene();
 
