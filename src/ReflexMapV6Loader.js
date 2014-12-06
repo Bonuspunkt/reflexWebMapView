@@ -144,7 +144,10 @@ ReflexMapV6Loader.prototype = {
         geometry.faces = faces;
         geometry.mergeVertices();
 
-        var mesh = new THREE.Mesh(geometry, material)
+        var mesh = THREE.SceneUtils.createMultiMaterialObject( geometry, [
+          material,
+          new THREE.MeshBasicMaterial( { color: 0x222222, wireframe: true} )
+        ]);
 
         if (!result[type]) { result[type] = new THREE.Object3D(); }
         result[type].add(mesh);
