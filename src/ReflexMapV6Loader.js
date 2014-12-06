@@ -254,21 +254,15 @@ function getMaterialInfo(entity, brush) {
 
 
 function getWireframeColor(color) {
-  var multi = 1;
+  var r = color.r + (color.r < .5 ? .1 : -.1);
+  var g = color.g + (color.r < .5 ? .1 : -.1);
+  var b = color.b + (color.r < .5 ? .1 : -.1);
 
-  var sum = color.r + color.g + color.b
-  if (sum < .5) {
-    multi = 10 * 255;
-  } else if (sum < 1) {
-    multi = 2 * 255;
-  } else if (sum < 1.5) {
-    multi = 1.3 * 255;
-  } else {
-    multi = .8 * 255;
-  }
-  return ((multi * color.r) << 16) +
-    ((multi * color.g) << 8) +
-    (multi * color.b)
+  return (
+    ((r * 255) << 16) +
+    ((g * 255) << 8) +
+    b * 255
+  );
 }
 
 
