@@ -1,5 +1,7 @@
 # Reflex Web Map View
 ## prerequisites
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/Bonuspunkt/reflexWebMapView.svg)](https://greenkeeper.io/)
 - node.js
 
 ## development
